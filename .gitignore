@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.git/
+frontend-staging/
+*.log
+.DS_Store
