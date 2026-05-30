@@ -62,4 +62,4 @@ docker run -p 8080:8080 bazaarmind
 Access the application at `http://localhost:8080`.
 
 ## License
-Proprietary / Kibou Studio © 2025
+Proprietary / Delta V © 2026
