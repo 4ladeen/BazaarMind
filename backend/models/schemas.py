@@ -126,12 +126,14 @@ class TransactionBase(BaseModel):
     payment_method: str = Field(default="cash", max_length=50)
 
 
+import datetime as dt
+
 class Transaction(TransactionBase):
     model_config = ConfigDict(from_attributes=True)
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     merchant_id: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    date: date = Field(default_factory=date.today)
+    date: dt.date = Field(default_factory=dt.date.today)
 
 
 # ─── Forecast Models ───────────────────────────────────
