@@ -60,6 +60,7 @@ docker run -p 8080:8080 bazaarmind
 ```
 
 Access the application at `http://localhost:8080`.
+Live link: https://bazaarmind-fg1j.onrender.com/api
 
 ## License
 Proprietary / Delta V © 2026
