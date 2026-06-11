@@ -177,7 +177,7 @@ export default function Sidebar({ isOpen, onClose }) {
           <div
             style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}
           >
-            Kibou Studio © 2025
+            Delta v © 2026
           </div>
         </div>
       </aside>

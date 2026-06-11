@@ -64,7 +64,7 @@ BazaarMind already uses PostgreSQL through SQLAlchemy, so Supabase is the cleane
 Example:
 
 ```env
-DATABASE_URL=postgresql+asyncpg://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres?sslmode=require
+DATABASE_URL=postgresql+asyncpg://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres?ssl=require
 DATABASE_URL_SYNC=postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres?sslmode=require
 ```
 
