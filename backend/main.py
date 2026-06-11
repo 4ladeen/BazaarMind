@@ -16,6 +16,7 @@ from pydantic import BaseModel
 # Add parent to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from backend.db import sqlite_db
 from backend.services.demo_data import demo_data
 from backend.ai.orchestrator import orchestrator
 from backend.mcp_servers.forecast_server import forecast_mcp
@@ -162,6 +163,63 @@ async def get_merchant_transactions(
         "period_days": days,
     }
 
+# ─── Merchant Onboarding ──────────────────────────────────
+
+class OnboardingRequest(BaseModel):
+    name: str
+    phone: str
+    location: str
+    division: str
+    district: str
+    categories: List[str] = []
+    tier: str = "starter"
+
+
+@app.post("/api/onboarding")
+async def onboard_merchant(data: OnboardingRequest):
+    """
+    Complete merchant onboarding flow:
+    1. Create merchant in SQLite
+    2. Send WhatsApp welcome message (if Twilio configured)
+    3. Return merchant ID + next steps
+    """
+    # Check duplicate
+    existing = sqlite_db.get_merchant_by_phone(data.phone)
+    if existing:
+        return {
+            "status": "existing",
+            "merchant": existing,
+            "message": "Apnar account already ache! Welcome back.",
+        }
+
+    # Create merchant
+    merchant = sqlite_db.create_merchant({
+        "name": data.name,
+        "phone": data.phone,
+        "location": data.location,
+        "division": data.division,
+        "district": data.district,
+        "categories": data.categories,
+        "tier": data.tier,
+        "monthly_revenue_bdt": 0,
+    })
+
+    # Send WhatsApp welcome (if configured)
+    whatsapp_sent = False
+    if os.getenv("TWILIO_ACCOUNT_SID"):
+        whatsapp_sent = await _send_whatsapp_welcome(data.phone, data.name, merchant["id"])
+
+    return {
+        "status": "created",
+        "merchant": merchant,
+        "whatsapp_sent": whatsapp_sent,
+        "message": f"Welcome to BazaarMind, {data.name}! Apnar merchant ID: {merchant['id']}",
+        "next_steps": [
+            "Add your products via /api/merchants/{id}/products",
+            "Start chatting at /chat",
+            "WhatsApp: Send a message to get AI advice",
+        ],
+    }
 
 # ─── Forecast APIs ────────────────────────────────────
 
@@ -323,6 +381,69 @@ async def call_mcp_tool(request: MCPToolCall):
 
     result = await server.call_tool(request.tool, request.params)
     return result
+
+
+# ─── Twilio Helpers ───────────────────────────────────────
+
+async def _send_whatsapp(to_number: str, message: str) -> bool:
+    """Send WhatsApp message via Twilio REST API."""
+    sid = os.getenv("TWILIO_ACCOUNT_SID")
+    token = os.getenv("TWILIO_AUTH_TOKEN")
+    from_number = os.getenv("TWILIO_WHATSAPP_FROM", "whatsapp:+14155238886")
+
+    if not sid or not token:
+        print(f"[WhatsApp MOCK] To: {to_number}\n{message}")
+        return False
+
+    to = f"whatsapp:{to_number}" if not to_number.startswith("whatsapp:") else to_number
+
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.post(
+                f"https://api.twilio.com/2010-04-01/Accounts/{sid}/Messages.json",
+                auth=(sid, token),
+                data={
+                    "From": from_number,
+                    "To": to,
+                    "Body": message,
+                },
+            )
+            resp.raise_for_status()
+            return True
+    except Exception as e:
+        print(f"WhatsApp send error: {e}")
+        return False
+
+
+async def _send_whatsapp_welcome(phone: str, name: str, merchant_id: str) -> bool:
+    msg = (
+        f"আসসালামু আলাইকুম {name} ভাই! 🙏\n\n"
+        f"BazaarMind e welcome! 🎉\n"
+        f"Apnar merchant ID: {merchant_id}\n\n"
+        f"Ekhon theke AI advice paben:\n"
+        f"📊 'dam ki rakhbo?' → Price advice\n"
+        f"📈 'kal ki sell hobe?' → Demand forecast\n"
+        f"📦 'stock koto ase?' → Inventory check\n\n"
+        f"Insha'Allah apnar business grow korbe! 💪"
+    )
+    return await _send_whatsapp(phone, msg)
+
+
+def _format_daily_report(name: str, revenue: float, low_stock: List[str], forecast) -> str:
+    name_short = name.split()[0] if name else "ভাই"
+    msg = (
+        f"🌅 Good morning {name_short} ভাই!\n\n"
+        f"📊 **Aajker BazaarMind Report**\n\n"
+        f"💰 Revenue today: ৳{revenue:,.0f}\n"
+    )
+    if forecast:
+        trend_emoji = "📈" if forecast.trend == "rising" else "📉" if forecast.trend == "declining" else "➡️"
+        msg += f"{trend_emoji} Hot product: {forecast.product_name} ({forecast.trend})\n"
+    if low_stock:
+        msg += f"\n⚠️ Restock needed:\n" + "\n".join(f"  • {item}" for item in low_stock)
+    msg += "\n\nShubho din hok! 🤲"
+    return msg
 
 
 # ─── Error Handlers ───────────────────────────────────

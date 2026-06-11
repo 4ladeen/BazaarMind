@@ -50,6 +50,26 @@ BazaarMind is a WhatsApp-first AI advisory platform engineered specifically for 
    npm run dev
    ```
 
+### Supabase Setup
+
+BazaarMind already uses PostgreSQL through SQLAlchemy, so Supabase is the cleanest way to replace the local database with a hosted one.
+
+1. Create a Supabase project.
+2. Open **Project Settings -> Database -> Connection string** and copy the connection string.
+3. Put the connection string into your `.env` as `DATABASE_URL`.
+4. If Supabase gives you a `postgres://` URL, change the scheme to `postgresql+asyncpg://` for the backend.
+5. Keep `DATABASE_URL_SYNC` in sync with the same database if you plan to use Alembic migrations.
+6. If you later want Supabase Auth or Storage, add the Supabase client only then. The current app does not require it just to use Supabase as the database.
+
+Example:
+
+```env
+DATABASE_URL=postgresql+asyncpg://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres?sslmode=require
+DATABASE_URL_SYNC=postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres?sslmode=require
+```
+
+If you want the backend to read Supabase directly from Python code later, the optional values in `.env.example` are already reserved for `SUPABASE_URL` and `SUPABASE_KEY`.
+
 ### Docker Deployment
 
 To build and run the entire stack in a single container:
@@ -60,7 +80,9 @@ docker run -p 8080:8080 bazaarmind
 ```
 
 Access the application at `http://localhost:8080`.
+
 Live link: https://bazaarmind-fg1j.onrender.com/api
+
 
 ## License
 Proprietary / Delta V © 2026

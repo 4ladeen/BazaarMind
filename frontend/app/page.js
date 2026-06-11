@@ -18,7 +18,7 @@ export default function LandingPage() {
           total_products: 156,
           queries_today: 234,
           demand_accuracy_pct: 89.3,
-        })
+        }),
       );
   }, []);
 
@@ -56,18 +56,18 @@ export default function LandingPage() {
           <Link href="/dashboard" className="btn btn-ghost">
             Dashboard
           </Link>
-          <Link href="/chat" className="btn btn-primary">
-            Try Chat Demo →
+          <Link href="/chat" className="btn btn-ghost">
+            Live Demo
+          </Link>
+          <Link href="/onboarding" className="btn btn-primary">
+            Get Started →
           </Link>
         </div>
       </nav>
 
       {/* Hero */}
       <section className="landing-hero">
-        <div
-          className="fade-in"
-          style={{ animationDelay: "0.2s", opacity: 0 }}
-        >
+        <div className="fade-in" style={{ animationDelay: "0.2s", opacity: 0 }}>
           <div
             style={{
               display: "inline-flex",
@@ -110,10 +110,18 @@ export default function LandingPage() {
           className="hero-cta fade-in"
           style={{ animationDelay: "0.8s", opacity: 0 }}
         >
-          <Link href="/dashboard" className="btn btn-primary" style={{ padding: "14px 32px", fontSize: 16 }}>
+          <Link
+            href="/dashboard"
+            className="btn btn-primary"
+            style={{ padding: "14px 32px", fontSize: 16 }}
+          >
             📊 Open Dashboard
           </Link>
-          <Link href="/chat" className="btn btn-ghost" style={{ padding: "14px 32px", fontSize: 16 }}>
+          <Link
+            href="/chat"
+            className="btn btn-ghost"
+            style={{ padding: "14px 32px", fontSize: 16 }}
+          >
             💬 Try WhatsApp Demo
           </Link>
         </div>
@@ -133,10 +141,26 @@ export default function LandingPage() {
             }}
           >
             {[
-              { value: stats.total_merchants, label: "Active Merchants", icon: "🏪" },
-              { value: stats.total_products, label: "Products Tracked", icon: "📦" },
-              { value: stats.queries_today, label: "AI Queries Today", icon: "🤖" },
-              { value: `${stats.demand_accuracy_pct}%`, label: "Forecast Accuracy", icon: "🎯" },
+              {
+                value: stats.total_merchants,
+                label: "Active Merchants",
+                icon: "🏪",
+              },
+              {
+                value: stats.total_products,
+                label: "Products Tracked",
+                icon: "📦",
+              },
+              {
+                value: stats.queries_today,
+                label: "AI Queries Today",
+                icon: "🤖",
+              },
+              {
+                value: `${stats.demand_accuracy_pct}%`,
+                label: "Forecast Accuracy",
+                icon: "🎯",
+              },
             ].map((stat, i) => (
               <div key={i} style={{ textAlign: "center" }}>
                 <div style={{ fontSize: 24, marginBottom: 4 }}>{stat.icon}</div>
@@ -229,7 +253,14 @@ export default function LandingPage() {
         >
           Multi-Agent AI Architecture
         </h2>
-        <p style={{ color: "var(--text-secondary)", marginBottom: 40, maxWidth: 600, margin: "0 auto 40px" }}>
+        <p
+          style={{
+            color: "var(--text-secondary)",
+            marginBottom: 40,
+            maxWidth: 600,
+            margin: "0 auto 40px",
+          }}
+        >
           BazaarMind uses a sophisticated multi-tier model topology with
           specialized agents for each commerce function.
         </p>
@@ -243,12 +274,36 @@ export default function LandingPage() {
             }}
           >
             {[
-              { layer: "Orchestration", tech: "LangGraph", color: "var(--accent-emerald)" },
-              { layer: "High-Tier Reasoning", tech: "Claude API", color: "var(--accent-blue)" },
-              { layer: "High-Throughput", tech: "Gemini Flash", color: "var(--accent-amber)" },
-              { layer: "Latency-Critical", tech: "Llama 3.3 (Groq)", color: "var(--accent-purple)" },
-              { layer: "Edge/Offline", tech: "Phi-3 / Gemma 2", color: "var(--accent-rose)" },
-              { layer: "Validation", tech: "Pydantic-AI", color: "var(--accent-cyan)" },
+              {
+                layer: "Orchestration",
+                tech: "LangGraph",
+                color: "var(--accent-emerald)",
+              },
+              {
+                layer: "High-Tier Reasoning",
+                tech: "Claude API",
+                color: "var(--accent-blue)",
+              },
+              {
+                layer: "High-Throughput",
+                tech: "Gemini Flash",
+                color: "var(--accent-amber)",
+              },
+              {
+                layer: "Latency-Critical",
+                tech: "Llama 3.3 (Groq)",
+                color: "var(--accent-purple)",
+              },
+              {
+                layer: "Edge/Offline",
+                tech: "Phi-3 / Gemma 2",
+                color: "var(--accent-rose)",
+              },
+              {
+                layer: "Validation",
+                tech: "Pydantic-AI",
+                color: "var(--accent-cyan)",
+              },
             ].map((item, i) => (
               <div
                 key={i}
@@ -259,10 +314,20 @@ export default function LandingPage() {
                   borderLeft: `3px solid ${item.color}`,
                 }}
               >
-                <div style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "var(--text-muted)",
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    marginBottom: 4,
+                  }}
+                >
                   {item.layer}
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: item.color }}>
+                <div
+                  style={{ fontSize: 15, fontWeight: 700, color: item.color }}
+                >
                   {item.tech}
                 </div>
               </div>
@@ -282,7 +347,7 @@ export default function LandingPage() {
         }}
       >
         <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-          © 2025 BazaarMind — Engineered by Kibou Studio
+          © 2026 BazaarMind — Engineered by Delta v
         </p>
         <p style={{ color: "var(--text-muted)", fontSize: 12, marginTop: 4 }}>
           AI-Driven Predictive Commerce for Bangladesh 🇧🇩
